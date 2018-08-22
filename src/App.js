@@ -5,6 +5,8 @@ import './App.css';
 import Category from './category/Category';
 import Cart from './cart/Cart';
 import Product from './product/Product';
+import CartPopup from './CartPopup';
+import { Provider } from './context';
 
 const Header = styled.header`
   display: flex;
@@ -12,8 +14,6 @@ const Header = styled.header`
   align-items: center;
   border-bottom: 1px solid #e4e4e4;
   height: 93px;
-  font-weight: 700;
-  font-size: 0.8em;
 `;
 
 const TopMenu = styled.div`
@@ -21,64 +21,115 @@ const TopMenu = styled.div`
   align-items: center;
 `;
 
-const CartButton = styled.button``;
+const withArrow = props => {
+  return (
+    props.arrow &&
+    `
+  &:after {
+    content: '\f0dd';
+    padding-left: 0.5em;
+    font-family: 'font awesome 5 free';
+    vertical-align: top;
+  }
+`
+  );
+};
 
-const MenuLink = styled(Link)`
+const HeaderButton = styled.button`
   color: #434348;
   padding: 0.5em 1em;
   text-decoration: none;
   text-transform: uppercase;
-  ${props =>
-    props.arrow &&
-    `
-    &:after {
-      content: '\f0dd';
-      padding-left: 0.5em;
-      font-family: 'font awesome 5 free';
-      vertical-align: top;
-    }
-  `};
+  font-weight: 700;
+  font-size: 0.8em;
+  ${withArrow};
 `;
 
+const CartButton = styled(HeaderButton)``;
+
+const MenuLink = HeaderButton.withComponent(Link);
+
+const CartContainer = styled.div`
+  position: relative;
+`;
+
+export const themes = {
+  light: {
+    foreground: '#000000',
+    background: '#eeeeee',
+  },
+  dark: {
+    foreground: '#ffffff',
+    background: '#222222',
+  },
+};
+
+const ThemeContext = React.createContext(
+  themes.dark, // default value
+);
+
+const CartContext = React.createContext({
+  items: [],
+});
+
 class App extends Component {
+  state = {
+    showCart: false,
+    products: [],
+    cart: {
+      items: [
+        {
+          id: 1,
+          quantity: 2,
+        },
+      ],
+    },
+  };
+
+  componentDidMount() {
+    this.fetchProducts();
+  }
+
+  async fetchProducts() {
+    const res = await fetch('/products.json');
+    const products = await res.json();
+    console.log('hi products', products);
+    this.setState({ products });
+  }
+
   render() {
+    const count = 2;
+    const { showCart } = this.state;
     return (
-      <div className="App">
-        <Header>
-          <img width={115} height={68} src="/media/logo.png" alt="logo" />
-          <TopMenu>
-            <MenuLink to="#">Home</MenuLink>
-            <MenuLink to="#" arrow>
-              Shop
-            </MenuLink>
-            <MenuLink to="#">Journal</MenuLink>
-            <MenuLink to="#">More</MenuLink>
-          </TopMenu>
-          <CartButton
-            onClick={() => {
-              console.log('click');
-            }}
-          >
-            My Cart
-          </CartButton>
-        </Header>
-        <p className="App-intro">
-          To get started, delete this header and introduction, and begin
-          building your app in the provided components.
-        </p>
-        <p className="App-intro">
-          We've setup the bare minimum you need to get started, but feel free to
-          add as many components as you see fit.
-        </p>
+      <Provider value={this.state}>
+        <div className="App">
+          <Header>
+            <img width={115} height={68} src="/media/logo.png" alt="logo" />
+            <TopMenu>
+              <MenuLink to="#">Home</MenuLink>
+              <MenuLink to="#" arrow>
+                Shop
+              </MenuLink>
+              <MenuLink to="#">Journal</MenuLink>
+              <MenuLink to="#">More</MenuLink>
+            </TopMenu>
+            <CartContainer>
+              <CartButton
+                arrow
+                onClick={() => {
+                  this.setState(state => ({ showCart: !state.showCart }));
+                }}>
+                My Cart ({count})
+              </CartButton>
+              {showCart && <CartPopup />}
+            </CartContainer>
+          </Header>
 
-        <header>
-          <Link to="/cart">My Cart</Link>
-        </header>
-
-        <Route exact path="/" component={Category} />
-        <Route path="/cart" component={Cart} />
-        <Route path="/product/:id" component={Product} />
-      </div>
+          <Route exact path="/" component={Category} />
+          <Route path="/cart" component={Cart} />
+          <Route path="/product/:id" component={Product} />
+        </div>
+      </Provider>
     );
   }
 }
