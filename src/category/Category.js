@@ -4,6 +4,7 @@ import './Category.css';
 import { withContext } from '../context';
 import ProductPreview from '../product/ProductPreview';
 
+// show off css grid because it's just great
 const ProductContainer = styled.div`
   display: grid;
   grid-gap: 12px;

@@ -21,6 +21,9 @@ const TopMenu = styled.div`
   align-items: center;
 `;
 
+// here is an example of why I like styled-components.
+// easily composeable and resuable!
+// not to mention testable.
 const withArrow = props => {
   return (
     props.arrow &&
@@ -53,26 +56,11 @@ const CartContainer = styled.div`
   position: relative;
 `;
 
-export const themes = {
-  light: {
-    foreground: '#000000',
-    background: '#eeeeee',
-  },
-  dark: {
-    foreground: '#ffffff',
-    background: '#222222',
-  },
-};
-
-const ThemeContext = React.createContext(
-  themes.dark, // default value
-);
-
-const CartContext = React.createContext({
-  items: [],
-});
-
 class App extends Component {
+  // send our App state to context as our method of storing global state.
+  // A shopping cart is typical use case for global state as it's accessed
+  // in many parts of the site.
+  // we could also use redux or mobx instead.
   state = {
     showCart: false,
     products: [],
@@ -80,10 +68,10 @@ class App extends Component {
       items: [
         {
           id: 1,
-          quantity: 2,
-        },
-      ],
-    },
+          quantity: 2
+        }
+      ]
+    }
   };
 
   componentDidMount() {
@@ -118,7 +106,8 @@ class App extends Component {
                 arrow
                 onClick={() => {
                   this.setState(state => ({ showCart: !state.showCart }));
-                }}>
+                }}
+              >
                 My Cart ({count})
               </CartButton>
               {showCart && <CartPopup />}

@@ -41,6 +41,40 @@ const ImageWrapper = styled.div`
 
 const RemoveButton = styled.button``;
 
+const Overlay = styled.div`
+  background-color: rgba(255, 255, 255, 0.5);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  transition: opacity 0.2s;
+  &:hover {
+    opacity: 1;
+  }
+`;
+
+const CommonButton = styled.button`
+  background-color: black;
+  color: white;
+  text-transform: uppercase;
+  padding: 0.5rem;
+  margin: 0.5rem;
+  width: 200px;
+`;
+
+const PrimaryButton = styled(CommonButton)`
+  background-color: black;
+`;
+const SecondaryButton = styled(CommonButton)`
+  background-color: grey;
+`;
+
 class ProductPreview extends Component {
   render() {
     const { image, title, price, brand } = this.props;
@@ -48,6 +82,10 @@ class ProductPreview extends Component {
       <Wrapper>
         <ImageWrapper>
           <Image url={`/media/${image}`} />
+          <Overlay>
+            <PrimaryButton onClick={() => {}}>View details</PrimaryButton>
+            <SecondaryButton onClick={() => {}}>add to cart</SecondaryButton>
+          </Overlay>
         </ImageWrapper>
         <span>{brand}</span>
         <Title>{title}</Title>
