@@ -5,11 +5,17 @@ import { withContext } from '../context';
 import ProductPreview from '../product/ProductPreview';
 
 // show off css grid because it's just great
-const ProductContainer = styled.div`
+const Grid = styled.div`
   display: grid;
   grid-gap: 12px;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  grid-template-rows: repeat(auto-fit, minmax(100px, 1fr));
   padding: 2rem 6rem;
+`;
+
+const GridItem = styled.div`
+  grid-column: 'auto / span 2';
+  grid-row: 'auto / span 2';
 `;
 
 class Category extends Component {
@@ -19,19 +25,21 @@ class Category extends Component {
     } = this.props;
     return (
       <div className="Category">
-        <ProductContainer>
+        <Grid>
           {products.map(item => (
-            <ProductPreview
-              id={item.id}
-              key={item.id}
-              brand={item.brand}
-              description={item.description}
-              image={item.image}
-              title={item.title}
-              price={item.price}
-            />
+            <GridItem>
+              <ProductPreview
+                id={item.id}
+                key={item.id}
+                brand={item.brand}
+                description={item.description}
+                image={item.image}
+                title={item.title}
+                price={item.price}
+              />
+            </GridItem>
           ))}
-        </ProductContainer>
+        </Grid>
       </div>
     );
   }

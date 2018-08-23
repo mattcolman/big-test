@@ -17,13 +17,10 @@ const Body = styled.div`
   text-align: left;
 `;
 
-const Image = styled.div`
-  flex-shrink: 0;
-  background-image: ${props => `url(${props.url})`};
-  background-size: cover;
-  background-position: center;
-  width: 330px;
-  height: 222px;
+const Image = styled.img`
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 `;
 
 const Title = styled.span`
@@ -89,7 +86,7 @@ class ProductPreview extends Component {
     return (
       <Wrapper>
         <ImageWrapper>
-          <Image url={`/media/${image}`} />
+          <Image src={`/media/${image}`} />
           <Overlay>
             <PrimaryButton onClick={() => {}}>View details</PrimaryButton>
             <SecondaryButton

@@ -5,6 +5,7 @@ import styled from 'styled-components';
 
 const Wrapper = styled.div`
   display: flex;
+  padding: 0.5em;
 `;
 
 const Body = styled.div`
@@ -13,6 +14,7 @@ const Body = styled.div`
   align-items: flex-start;
   text-align: left;
   flex-grow: 1;
+  padding-left: 0.2em;
 `;
 
 const Image = styled.div`
@@ -26,12 +28,13 @@ const Image = styled.div`
 
 const Title = styled.span`
   font-size: 1rem;
-  font-weight: 600;
+  font-weight: 700;
   text-transform: uppercase;
 `;
 
 const SmallText = styled.span`
   font-size: 0.7rem;
+  padding-left: 0.2em;
 `;
 
 const RemoveButton = styled.button`
@@ -39,6 +42,16 @@ const RemoveButton = styled.button`
   align-self: flex-start;
   padding: 0.5rem;
   color: grey;
+`;
+
+const Brand = styled.span`
+  text-transform: uppercase;
+  color: grey;
+  font-size: 0.8em;
+`;
+
+const Price = styled.span`
+  font-weight: 700;
 `;
 
 class ItemPreview extends Component {
@@ -53,13 +66,14 @@ class ItemPreview extends Component {
             <Title>{title}</Title>
             <SmallText>x {quantity}</SmallText>
           </span>
-          <span>{brand}</span>
-          <span>${price}</span>
+          <Brand>{brand}</Brand>
+          <Price>${price}</Price>
         </Body>
         <RemoveButton
           onClick={() => {
             actions.removeItem(id);
-          }}>
+          }}
+        >
           <i class="fas fa-times" />
         </RemoveButton>
       </Wrapper>

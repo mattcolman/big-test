@@ -8,27 +8,60 @@ import { withContext } from './context';
 const Wrapper = styled.div`
   position: absolute;
   top: 45px;
-  right: 0;
+  right: 10px;
   background-color: white;
-  border: 1px solid black;
   width: 418px;
   z-index: 100;
+  box-shadow: 0px 1px 1px grey;
 `;
+
 const ItemsWrapper = styled.div``;
-const Footer = styled.div``;
+
+const Footer = styled.div`
+  padding: 0.5em;
+  color: grey;
+  text-transform: uppercase;
+`;
+
 const FooterText = styled.div`
+  border-top: 1px solid grey;
   display: flex;
   justify-content: space-between;
+  padding: 0.5em 0;
 `;
+
 const FooterButtons = styled.div`
   display: flex;
 `;
-const ViewCartButton = styled.button``;
-const CheckoutButton = styled.button``;
+
+const ViewCartButton = styled.button`
+  background-color: white;
+  border: 1px solid black;
+  padding: 1rem;
+  color: black;
+  text-transform: uppercase;
+  flex: 1;
+  margin-right: 0.5em;
+`;
+
+const CheckoutButton = styled.button`
+  background-color: black;
+  color: white;
+  padding: 1rem;
+  text-transform: uppercase;
+  flex: 1;
+  margin-left: 0.5em;
+`;
+
+const EmptyWrapper = styled.div`
+  padding: 1rem;
+  text-transform: uppercase;
+`;
 
 class CartPopup extends Component {
   render() {
     const {
+      count,
       state: { cart, products }
     } = this.props;
     // This is not great - we should use memoization to only recompute when items change instead of each render
@@ -39,6 +72,13 @@ class CartPopup extends Component {
         return cart[item.id] * item.price;
       })
     )(filteredProducts);
+    if (count === 0) {
+      return (
+        <Wrapper>
+          <EmptyWrapper>Your cart is Empty :(</EmptyWrapper>
+        </Wrapper>
+      );
+    }
     return (
       <Wrapper>
         <ItemsWrapper>
@@ -60,8 +100,8 @@ class CartPopup extends Component {
             <span>${totalCost}</span>
           </FooterText>
           <FooterButtons>
-            <ViewCartButton />
-            <CheckoutButton />
+            <ViewCartButton>View Cart</ViewCartButton>
+            <CheckoutButton>Checkout</CheckoutButton>
           </FooterButtons>
         </Footer>
       </Wrapper>

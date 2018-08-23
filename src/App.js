@@ -126,7 +126,7 @@ class App extends Component {
               >
                 My Cart ({count})
               </CartButton>
-              {showCart && <CartPopup />}
+              {showCart && <CartPopup count={count} />}
             </CartContainer>
           </Header>
 
