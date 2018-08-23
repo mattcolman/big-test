@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Link, Route } from 'react-router-dom';
-import { compose, find, get } from 'lodash/fp';
+import { compose, values, sum, find, get, sumBy } from 'lodash/fp';
 import styled from 'styled-components';
 import ItemPreview from './ItemPreview';
 import { withContext } from './context';
@@ -28,26 +28,28 @@ const CheckoutButton = styled.button``;
 
 class CartPopup extends Component {
   render() {
-    // This is terrible - we should use only recompute totalCost when cart items change
-    const totalCost = 56;
-    const { cart, products } = this.props;
-    const filteredProducts = products.filter(product =>
-      cart.items.find(cartItem => cartItem.id === product.id)
-    );
+    const {
+      state: { cart, products }
+    } = this.props;
+    // This is not great - we should use memoization to only recompute when items change instead of each render
+    // with redux reselect we get this for free using selectors, with context we'll have to use our own method.
+    const filteredProducts = products.filter(product => cart[product.id]);
+    const totalCost = compose(
+      sumBy(item => {
+        return cart[item.id] * item.price;
+      })
+    )(filteredProducts);
     return (
       <Wrapper>
         <ItemsWrapper>
-          {cart.items.map(item => (
+          {filteredProducts.map(item => (
             <ItemPreview
+              id={item.id}
               key={item.id}
               brand={item.brand}
-              description={item.description}
               image={item.image}
               title={item.title}
-              quantity={compose(
-                get('quantity'),
-                find(cartItem => cartItem.id === item.id)
-              )(cart.items)}
+              quantity={cart[item.id]}
               price={item.price}
             />
           ))}

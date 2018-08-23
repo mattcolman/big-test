@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Link, Route } from 'react-router-dom';
 import styled from 'styled-components';
 import numeral from 'numeral';
+import { withContext } from '../context';
 
 const Wrapper = styled.div`
   display: flex;
@@ -77,14 +78,27 @@ const SecondaryButton = styled(CommonButton)`
 
 class ProductPreview extends Component {
   render() {
-    const { image, title, price, brand } = this.props;
+    const {
+      image,
+      title,
+      price,
+      brand,
+      id,
+      actions: { addItem }
+    } = this.props;
     return (
       <Wrapper>
         <ImageWrapper>
           <Image url={`/media/${image}`} />
           <Overlay>
             <PrimaryButton onClick={() => {}}>View details</PrimaryButton>
-            <SecondaryButton onClick={() => {}}>add to cart</SecondaryButton>
+            <SecondaryButton
+              onClick={() => {
+                addItem(id);
+              }}
+            >
+              add to cart
+            </SecondaryButton>
           </Overlay>
         </ImageWrapper>
         <span>{brand}</span>
@@ -95,4 +109,4 @@ class ProductPreview extends Component {
   }
 }
 
-export default ProductPreview;
+export default withContext(ProductPreview);

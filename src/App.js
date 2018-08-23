@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Link, Route } from 'react-router-dom';
+import { sum, values, compose, omit } from 'lodash/fp';
 import styled from 'styled-components';
 import './App.css';
 import Category from './category/Category';
@@ -64,14 +65,7 @@ class App extends Component {
   state = {
     showCart: false,
     products: [],
-    cart: {
-      items: [
-        {
-          id: 1,
-          quantity: 2
-        }
-      ]
-    }
+    cart: {}
   };
 
   componentDidMount() {
@@ -86,10 +80,32 @@ class App extends Component {
   }
 
   render() {
-    const count = 2;
-    const { showCart } = this.state;
+    const { cart, showCart } = this.state;
+    const count = compose(
+      sum,
+      values
+    )(cart);
     return (
-      <Provider value={this.state}>
+      <Provider
+        value={{
+          state: this.state,
+          actions: {
+            addItem: id => {
+              this.setState(state => {
+                return {
+                  cart: {
+                    ...state.cart,
+                    [id]: (state.cart[id] || 0) + 1
+                  }
+                };
+              });
+            },
+            removeItem: id => {
+              this.setState(state => ({ cart: omit([id])(state.cart) }));
+            }
+          }
+        }}
+      >
         <div className="App">
           <Header>
             <img width={115} height={68} src="/media/logo.png" alt="logo" />

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Link, Route } from 'react-router-dom';
+import { withContext } from './context';
 import styled from 'styled-components';
 
 const Wrapper = styled.div`
@@ -11,10 +12,16 @@ const Body = styled.div`
   flex-direction: column;
   align-items: flex-start;
   text-align: left;
+  flex-grow: 1;
 `;
 
-const Image = styled.img`
+const Image = styled.div`
   flex-shrink: 0;
+  background-image: ${props => `url(${props.url})`};
+  background-size: cover;
+  background-position: center;
+  width: 80px;
+  height: 80px;
 `;
 
 const Title = styled.span`
@@ -27,15 +34,20 @@ const SmallText = styled.span`
   font-size: 0.7rem;
 `;
 
-const RemoveButton = styled.button``;
+const RemoveButton = styled.button`
+  font-family: 'font awesome 5 free';
+  align-self: flex-start;
+  padding: 0.5rem;
+  color: grey;
+`;
 
 class ItemPreview extends Component {
   render() {
-    const { image, title, price, brand, quantity } = this.props;
+    const { id, image, title, price, brand, quantity, actions } = this.props;
     console.log('what iamge', image);
     return (
       <Wrapper>
-        <Image src={`/media/${image}`} alt="product" width={80} height={80} />
+        <Image url={`/media/${image}`} alt="product" />
         <Body>
           <span>
             <Title>{title}</Title>
@@ -44,10 +56,15 @@ class ItemPreview extends Component {
           <span>{brand}</span>
           <span>${price}</span>
         </Body>
-        <RemoveButton onClick={() => {}}>X</RemoveButton>
+        <RemoveButton
+          onClick={() => {
+            actions.removeItem(id);
+          }}>
+          <i class="fas fa-times" />
+        </RemoveButton>
       </Wrapper>
     );
   }
 }
 
-export default ItemPreview;
+export default withContext(ItemPreview);

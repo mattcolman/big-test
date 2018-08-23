@@ -14,12 +14,15 @@ const ProductContainer = styled.div`
 
 class Category extends Component {
   render() {
-    const { products } = this.props;
+    const {
+      state: { products }
+    } = this.props;
     return (
       <div className="Category">
         <ProductContainer>
           {products.map(item => (
             <ProductPreview
+              id={item.id}
               key={item.id}
               brand={item.brand}
               description={item.description}
