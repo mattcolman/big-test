@@ -6,12 +6,8 @@ import ItemPreview from './ItemPreview';
 import { withContext } from './context';
 
 const Wrapper = styled.div`
-  position: absolute;
-  top: 45px;
-  right: 10px;
   background-color: white;
   width: 418px;
-  z-index: 100;
   box-shadow: 0px 1px 1px grey;
 `;
 
@@ -61,8 +57,9 @@ const EmptyWrapper = styled.div`
 class CartPopup extends Component {
   render() {
     const {
+      style,
       count,
-      state: { cart, products }
+      state: { cart, products },
     } = this.props;
     // This is not great - we should use memoization to only recompute when items change instead of each render
     // with redux reselect we get this for free using selectors, with context we'll have to use our own method.
@@ -70,17 +67,17 @@ class CartPopup extends Component {
     const totalCost = compose(
       sumBy(item => {
         return cart[item.id] * item.price;
-      })
+      }),
     )(filteredProducts);
     if (count === 0) {
       return (
-        <Wrapper>
+        <Wrapper style={style}>
           <EmptyWrapper>Your cart is Empty :(</EmptyWrapper>
         </Wrapper>
       );
     }
     return (
-      <Wrapper>
+      <Wrapper style={style}>
         <ItemsWrapper>
           {filteredProducts.map(item => (
             <ItemPreview

@@ -4,18 +4,25 @@ import './Category.css';
 import { withContext } from '../context';
 import ProductPreview from '../product/ProductPreview';
 
+const Wrapper = styled.div`
+  display: flex;
+  justify-content: center;
+`;
+
 // show off css grid because it's just great
 const Grid = styled.div`
   display: grid;
   grid-gap: 12px;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-  grid-template-rows: repeat(auto-fit, minmax(100px, 1fr));
-  padding: 2rem 6rem;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-auto-rows: 270px;
+  padding: 2rem 2rem;
+  max-width: 1000px;
+  width: 100%;
 `;
 
 const GridItem = styled.div`
-  grid-column: 'auto / span 2';
-  grid-row: 'auto / span 2';
+  width: 100%;
+  height: 100%;
 `;
 
 class Category extends Component {
@@ -24,23 +31,21 @@ class Category extends Component {
       state: { products }
     } = this.props;
     return (
-      <div className="Category">
+      <Wrapper>
         <Grid>
           {products.map(item => (
-            <GridItem>
-              <ProductPreview
-                id={item.id}
-                key={item.id}
-                brand={item.brand}
-                description={item.description}
-                image={item.image}
-                title={item.title}
-                price={item.price}
-              />
-            </GridItem>
+            <ProductPreview
+              id={item.id}
+              key={item.id}
+              brand={item.brand}
+              description={item.description}
+              image={item.image}
+              title={item.title}
+              price={item.price}
+            />
           ))}
         </Grid>
-      </div>
+      </Wrapper>
     );
   }
 }

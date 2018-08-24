@@ -57,7 +57,6 @@ const Price = styled.span`
 class ItemPreview extends Component {
   render() {
     const { id, image, title, price, brand, quantity, actions } = this.props;
-    console.log('what iamge', image);
     return (
       <Wrapper>
         <Image url={`/media/${image}`} alt="product" />

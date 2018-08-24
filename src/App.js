@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { Link, Route } from 'react-router-dom';
+import { Motion, spring } from 'react-motion';
 import { sum, values, compose, omit } from 'lodash/fp';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import './App.css';
 import Category from './category/Category';
 import Cart from './cart/Cart';
@@ -57,6 +58,13 @@ const CartContainer = styled.div`
   position: relative;
 `;
 
+const CartPopupContainer = styled.div`
+  position: absolute;
+  top: 45px;
+  right: 10px;
+  z-index: 100;
+`;
+
 class App extends Component {
   // send our App state to context as our method of storing global state.
   // A shopping cart is typical use case for global state as it's accessed
@@ -65,7 +73,7 @@ class App extends Component {
   state = {
     showCart: false,
     products: [],
-    cart: {}
+    cart: {},
   };
 
   componentDidMount() {
@@ -83,7 +91,7 @@ class App extends Component {
     const { cart, showCart } = this.state;
     const count = compose(
       sum,
-      values
+      values,
     )(cart);
     return (
       <Provider
@@ -95,17 +103,16 @@ class App extends Component {
                 return {
                   cart: {
                     ...state.cart,
-                    [id]: (state.cart[id] || 0) + 1
-                  }
+                    [id]: (state.cart[id] || 0) + 1,
+                  },
                 };
               });
             },
             removeItem: id => {
               this.setState(state => ({ cart: omit([id])(state.cart) }));
-            }
-          }
-        }}
-      >
+            },
+          },
+        }}>
         <div className="App">
           <Header>
             <img width={115} height={68} src="/media/logo.png" alt="logo" />
@@ -122,11 +129,31 @@ class App extends Component {
                 arrow
                 onClick={() => {
                   this.setState(state => ({ showCart: !state.showCart }));
-                }}
-              >
+                }}>
                 My Cart ({count})
               </CartButton>
-              {showCart && <CartPopup count={count} />}
+              <Motion
+                style={
+                  showCart
+                    ? {
+                        opacity: spring(1),
+                        y: spring(0),
+                      }
+                    : {
+                        opacity: spring(0),
+                        y: spring(-10),
+                      }
+                }>
+                {({ opacity, y }) => (
+                  <CartPopupContainer
+                    style={{
+                      opacity,
+                      transform: `translate3d(0, ${y}px, 0)`,
+                    }}>
+                    <CartPopup count={count} />
+                  </CartPopupContainer>
+                )}
+              </Motion>
             </CartContainer>
           </Header>
 

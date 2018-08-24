@@ -8,6 +8,9 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
 `;
 
 const Body = styled.div`
@@ -18,8 +21,7 @@ const Body = styled.div`
 `;
 
 const Image = styled.img`
-  width: 100%;
-  height: 100%;
+  max-height: 200px;
   object-fit: cover;
 `;
 
@@ -86,7 +88,7 @@ class ProductPreview extends Component {
     return (
       <Wrapper>
         <ImageWrapper>
-          <Image src={`/media/${image}`} />
+          <Image src={`/media/${image}`} width="100%" height="auto" />
           <Overlay>
             <PrimaryButton onClick={() => {}}>View details</PrimaryButton>
             <SecondaryButton
