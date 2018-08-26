@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { compose, sum, values, sumBy } from 'lodash/fp';
 import styled from 'styled-components';
 import ItemPreview from './ItemPreview';
-import { withContext } from './context';
+import { withContext } from '../context';
+import { getTotalCost, getItemCount } from '../util';
 
 const Wrapper = styled.div``;
 
@@ -24,6 +24,9 @@ const FooterText = styled.div`
 
 const FooterButtons = styled.div`
   display: flex;
+  & > :not(:first-child) {
+    margin-left: 0.5em;
+  }
 `;
 
 const ViewCartLink = styled(Link)`
@@ -33,7 +36,6 @@ const ViewCartLink = styled(Link)`
   color: black;
   text-transform: uppercase;
   flex: 1;
-  margin-right: 0.5em;
 `;
 
 const CheckoutButton = styled.button`
@@ -42,7 +44,6 @@ const CheckoutButton = styled.button`
   padding: 1rem;
   text-transform: uppercase;
   flex: 1;
-  margin-left: 0.5em;
 `;
 
 const EmptyWrapper = styled.div`
@@ -50,7 +51,7 @@ const EmptyWrapper = styled.div`
   text-transform: uppercase;
 `;
 
-class CartPopup extends Component {
+class CartContent extends Component {
   static defaultProps = {
     viewCart: false
   };
@@ -63,15 +64,8 @@ class CartPopup extends Component {
     // This is not great - we should use memoization to only recompute when items change instead of each render
     // with redux reselect we get this for free using selectors, with context we'll have to use our own method.
     const filteredProducts = products.filter(product => cart[product.id]);
-    const totalCost = compose(
-      sumBy(item => {
-        return cart[item.id] * item.price;
-      })
-    )(filteredProducts);
-    const count = compose(
-      sum,
-      values
-    )(cart);
+    const totalCost = getTotalCost(filteredProducts, cart);
+    const count = getItemCount(cart);
     if (count === 0) {
       return (
         <Wrapper style={style}>
@@ -109,4 +103,4 @@ class CartPopup extends Component {
   }
 }
 
-export default withContext(CartPopup);
+export default withContext(CartContent);

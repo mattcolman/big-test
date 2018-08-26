@@ -7,7 +7,7 @@ import './App.css';
 import Category from './category/Category';
 import Cart from './cart/Cart';
 import Product from './product/Product';
-import CartPopup from './CartPopup';
+import CartContent from './cart/CartContent';
 import { Provider } from './context';
 
 const Header = styled.header`
@@ -78,12 +78,25 @@ const Logo = styled.img`
 const initCartFromLocalStorage =
   window.localStorage && window.localStorage.getItem('storefront-cart');
 
+function setCartState(newCartState) {
+  // also store the cart in localStorage incase of connection dropout,
+  // user navigates away and return later etc.
+  if (window.localStorage) {
+    window.localStorage.setItem(
+      'storefront-cart',
+      JSON.stringify(newCartState)
+    );
+  }
+  return newCartState;
+}
+
 class App extends Component {
   // send our App state to context as our method of storing global state.
   // A shopping cart is typical use case for global state as it's accessed
   // in many parts of the site.
   // we could also use redux or mobx instead.
   state = {
+    isLoading: true,
     showCart: false,
     products: [],
     cart: initCartFromLocalStorage ? JSON.parse(initCartFromLocalStorage) : {}
@@ -97,7 +110,7 @@ class App extends Component {
     try {
       const res = await fetch('/products.json');
       const products = await res.json();
-      this.setState({ products });
+      this.setState({ products, isLoading: false });
     } catch (e) {
       console.log('cannot fetch products');
     }
@@ -116,34 +129,38 @@ class App extends Component {
           actions: {
             addItem: id => {
               this.setState(state => {
-                const newCartState = {
-                  ...state.cart,
-                  [id]: (state.cart[id] || 0) + 1
-                };
-                // also store the cart in localStorage incase of connection dropout,
-                // user navigates away and return later etc.
-                if (window.localStorage) {
-                  window.localStorage.setItem(
-                    'storefront-cart',
-                    JSON.stringify(newCartState)
-                  );
-                }
                 return {
-                  cart: newCartState
+                  cart: setCartState({
+                    ...state.cart,
+                    [id]: 1
+                  })
+                };
+              });
+            },
+            incrementItem: id => {
+              this.setState(state => {
+                return {
+                  cart: setCartState({
+                    ...state.cart,
+                    [id]: (state.cart[id] || 0) + 1
+                  })
+                };
+              });
+            },
+            decrementItem: id => {
+              this.setState(state => {
+                return {
+                  cart: setCartState({
+                    ...state.cart,
+                    [id]: Math.max(0, (state.cart[id] || 0) - 1)
+                  })
                 };
               });
             },
             removeItem: id => {
               this.setState(state => {
-                const newCartState = omit([id])(state.cart);
-                if (window.localStorage) {
-                  window.localStorage.setItem(
-                    'storefront-cart',
-                    JSON.stringify(newCartState)
-                  );
-                }
                 return {
-                  cart: newCartState
+                  cart: setCartState(omit([id])(state.cart))
                 };
               });
             }
@@ -155,7 +172,7 @@ class App extends Component {
             <Logo width={115} height={68} src="/media/logo.png" alt="logo" />
             <TopMenu>
               <MenuLink to="/">Home</MenuLink>
-              <MenuLink to="#" arrow={1}>
+              <MenuLink to="/" arrow={1}>
                 Shop
               </MenuLink>
               <MenuLink to="#">Journal</MenuLink>
@@ -204,7 +221,7 @@ class App extends Component {
                             transform: `translate3d(0, ${style.y}px, 0)`
                           }}
                         >
-                          <CartPopup viewCart />
+                          <CartContent viewCart />
                         </CartPopupContainer>
                       ))}
                     </div>

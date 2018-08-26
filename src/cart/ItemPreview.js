@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { withContext } from './context';
+import { withContext } from '../context';
 import styled from 'styled-components';
 
 const Wrapper = styled.div`
@@ -53,6 +53,24 @@ const Price = styled.span`
   font-weight: 700;
 `;
 
+const PlusMinusButtons = styled.div`
+  display: flex;
+  flex-direction: column;
+  font-size: 0.8em;
+  align-self: stretch;
+  justify-content: center;
+  & > :not(:first-child) {
+    margin-top: 0.2em;
+  }
+`;
+
+const Button = styled.button`
+  background-color: #ccc;
+  color: #666;
+  width: 2.5em;
+  height: 2.5em;
+`;
+
 class ItemPreview extends Component {
   render() {
     const { id, image, title, price, brand, quantity, actions } = this.props;
@@ -67,6 +85,22 @@ class ItemPreview extends Component {
           <Brand>{brand}</Brand>
           <Price>${price}</Price>
         </Body>
+        <PlusMinusButtons>
+          <Button
+            onClick={() => {
+              actions.incrementItem(id);
+            }}
+          >
+            <i className="fas fa-plus" />
+          </Button>
+          <Button
+            onClick={() => {
+              actions.decrementItem(id);
+            }}
+          >
+            <i className="fas fa-minus" />
+          </Button>
+        </PlusMinusButtons>
         <RemoveButton
           onClick={() => {
             actions.removeItem(id);

@@ -23,8 +23,11 @@ const Grid = styled.div`
 class Category extends Component {
   render() {
     const {
-      state: { products }
+      state: { isLoading, products }
     } = this.props;
+    if (isLoading) {
+      return <span>loading...</span>;
+    }
     return (
       <Wrapper>
         <Grid>

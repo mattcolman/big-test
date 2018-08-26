@@ -2,6 +2,9 @@ import React, { Component } from 'react';
 import { withContext } from '../context';
 import ProductPreview from './ProductPreview';
 
+// Unfinished component
+// ran out of time
+//
 class Product extends Component {
   render() {
     const {
