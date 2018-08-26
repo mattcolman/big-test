@@ -64,8 +64,7 @@ test('getTotalCost', () => {
     '1': 2,
     '2': 1
   };
-  const filteredProducts = products.filter(p => cart[p.id]);
-  expect(getTotalCost(filteredProducts, cart)).toBe(108);
+  expect(getTotalCost(products, cart)).toBe(108);
 });
 
 test('getItemCount', () => {

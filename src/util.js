@@ -1,13 +1,13 @@
 import { compose, sumBy, sum, values } from 'lodash/fp';
 
 // get total cost of your shopping cart
-export function getTotalCost(filteredProducts, cart) {
+export function getTotalCost(products, cart) {
   return sumBy(item => {
-    console.log('what the products', cart[item.id]);
-    return cart[item.id] * item.price;
-  })(filteredProducts);
+    return (cart[item.id] || 0) * item.price;
+  })(products);
 }
 
+// get total amount of items in your shopping cart
 export function getItemCount(cart) {
   return compose(
     sum,

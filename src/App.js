@@ -92,7 +92,7 @@ function setCartState(newCartState) {
 
 class App extends Component {
   // send our App state to context as our method of storing global state.
-  // A shopping cart is typical use case for global state as it's accessed
+  // A shopping cart is a typical use case for global state as it's accessed
   // in many parts of the site.
   // we could also use redux or mobx instead.
   state = {

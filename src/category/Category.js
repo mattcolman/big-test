@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
-import './Category.css';
 import { withContext } from '../context';
 import ProductPreview from '../product/ProductPreview';
 
