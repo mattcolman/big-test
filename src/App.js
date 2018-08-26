@@ -94,9 +94,13 @@ class App extends Component {
   }
 
   async fetchProducts() {
-    const res = await fetch('/products.json');
-    const products = await res.json();
-    this.setState({ products });
+    try {
+      const res = await fetch('/products.json');
+      const products = await res.json();
+      this.setState({ products });
+    } catch (e) {
+      console.log('cannot fetch products');
+    }
   }
 
   render() {
