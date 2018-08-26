@@ -132,7 +132,7 @@ class App extends Component {
                 return {
                   cart: setCartState({
                     ...state.cart,
-                    [id]: 1
+                    [id]: state.cart[id] || 1
                   })
                 };
               });
