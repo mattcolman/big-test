@@ -1,15 +1,11 @@
 import React, { Component } from 'react';
-import { Link, Route } from 'react-router-dom';
-import { compose, values, sum, find, get, sumBy } from 'lodash/fp';
+import { Link } from 'react-router-dom';
+import { compose, sum, values, sumBy } from 'lodash/fp';
 import styled from 'styled-components';
 import ItemPreview from './ItemPreview';
 import { withContext } from './context';
 
-const Wrapper = styled.div`
-  background-color: white;
-  width: 418px;
-  box-shadow: 0px 1px 1px grey;
-`;
+const Wrapper = styled.div``;
 
 const ItemsWrapper = styled.div``;
 
@@ -30,7 +26,7 @@ const FooterButtons = styled.div`
   display: flex;
 `;
 
-const ViewCartButton = styled.button`
+const ViewCartLink = styled(Link)`
   background-color: white;
   border: 1px solid black;
   padding: 1rem;
@@ -55,11 +51,14 @@ const EmptyWrapper = styled.div`
 `;
 
 class CartPopup extends Component {
+  static defaultProps = {
+    viewCart: false
+  };
   render() {
     const {
       style,
-      count,
       state: { cart, products },
+      viewCart
     } = this.props;
     // This is not great - we should use memoization to only recompute when items change instead of each render
     // with redux reselect we get this for free using selectors, with context we'll have to use our own method.
@@ -67,8 +66,12 @@ class CartPopup extends Component {
     const totalCost = compose(
       sumBy(item => {
         return cart[item.id] * item.price;
-      }),
+      })
     )(filteredProducts);
+    const count = compose(
+      sum,
+      values
+    )(cart);
     if (count === 0) {
       return (
         <Wrapper style={style}>
@@ -97,7 +100,7 @@ class CartPopup extends Component {
             <span>${totalCost}</span>
           </FooterText>
           <FooterButtons>
-            <ViewCartButton>View Cart</ViewCartButton>
+            {viewCart && <ViewCartLink to="/cart">View Cart</ViewCartLink>}
             <CheckoutButton>Checkout</CheckoutButton>
           </FooterButtons>
         </Footer>

@@ -20,11 +20,6 @@ const Grid = styled.div`
   width: 100%;
 `;
 
-const GridItem = styled.div`
-  width: 100%;
-  height: 100%;
-`;
-
 class Category extends Component {
   render() {
     const {

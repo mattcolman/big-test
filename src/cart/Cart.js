@@ -1,14 +1,14 @@
 import React, { Component } from 'react';
-import './Cart.css';
+import CartPopup from '../CartPopup';
 
 class Cart extends Component {
-    render() {
-        return (
-            <div className="Cart">
-                Cart
-            </div>
-        );
-    }
+  render() {
+    return (
+      <div className="Cart">
+        <CartPopup />
+      </div>
+    );
+  }
 }
 
 export default Cart;

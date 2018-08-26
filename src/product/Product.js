@@ -1,21 +1,31 @@
 import React, { Component } from 'react';
-import './Product.css';
+import { withContext } from '../context';
+import ProductPreview from './ProductPreview';
 
 class Product extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            id: props.match.params.id,
-        };
+  render() {
+    const {
+      match,
+      state: { products }
+    } = this.props;
+    const product = products.find(p => p.id === match.params.id);
+    if (!product) {
+      return <div>Product not found :(</div>;
     }
-
-    render() {
-        return (
-            <div className="Product">
-                Product { this.state.id }
-            </div>
-        );
-    }
+    const title = product.title;
+    return (
+      <div>
+        Product {title}
+        <ProductPreview
+          image={product.image}
+          title={product.title}
+          price={product.price}
+          brand={product.brand}
+          id={product.id}
+        />
+      </div>
+    );
+  }
 }
 
-export default Product;
+export default withContext(Product);

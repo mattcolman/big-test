@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { Link, Route } from 'react-router-dom';
-import { Motion, spring } from 'react-motion';
+import { TransitionMotion, spring } from 'react-motion';
 import { sum, values, compose, omit } from 'lodash/fp';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 import './App.css';
 import Category from './category/Category';
 import Cart from './cart/Cart';
@@ -63,7 +63,20 @@ const CartPopupContainer = styled.div`
   top: 45px;
   right: 10px;
   z-index: 100;
+  background-color: white;
+  width: 418px;
+  max-width: 90vw;
+  box-shadow: 0px 1px 1px grey;
 `;
+
+const Logo = styled.img`
+  @media (min-width: 320px) and (max-width: 480px) {
+    display: none;
+  }
+`;
+
+const initCartFromLocalStorage =
+  window.localStorage && window.localStorage.getItem('storefront-cart');
 
 class App extends Component {
   // send our App state to context as our method of storing global state.
@@ -73,7 +86,7 @@ class App extends Component {
   state = {
     showCart: false,
     products: [],
-    cart: {},
+    cart: initCartFromLocalStorage ? JSON.parse(initCartFromLocalStorage) : {}
   };
 
   componentDidMount() {
@@ -83,7 +96,6 @@ class App extends Component {
   async fetchProducts() {
     const res = await fetch('/products.json');
     const products = await res.json();
-    console.log('hi products', products);
     this.setState({ products });
   }
 
@@ -91,7 +103,7 @@ class App extends Component {
     const { cart, showCart } = this.state;
     const count = compose(
       sum,
-      values,
+      values
     )(cart);
     return (
       <Provider
@@ -100,25 +112,46 @@ class App extends Component {
           actions: {
             addItem: id => {
               this.setState(state => {
+                const newCartState = {
+                  ...state.cart,
+                  [id]: (state.cart[id] || 0) + 1
+                };
+                // also store the cart in localStorage incase of connection dropout,
+                // user navigates away and return later etc.
+                if (window.localStorage) {
+                  window.localStorage.setItem(
+                    'storefront-cart',
+                    JSON.stringify(newCartState)
+                  );
+                }
                 return {
-                  cart: {
-                    ...state.cart,
-                    [id]: (state.cart[id] || 0) + 1,
-                  },
+                  cart: newCartState
                 };
               });
             },
             removeItem: id => {
-              this.setState(state => ({ cart: omit([id])(state.cart) }));
-            },
-          },
-        }}>
+              this.setState(state => {
+                const newCartState = omit([id])(state.cart);
+                if (window.localStorage) {
+                  window.localStorage.setItem(
+                    'storefront-cart',
+                    JSON.stringify(newCartState)
+                  );
+                }
+                return {
+                  cart: newCartState
+                };
+              });
+            }
+          }
+        }}
+      >
         <div className="App">
           <Header>
-            <img width={115} height={68} src="/media/logo.png" alt="logo" />
+            <Logo width={115} height={68} src="/media/logo.png" alt="logo" />
             <TopMenu>
-              <MenuLink to="#">Home</MenuLink>
-              <MenuLink to="#" arrow>
+              <MenuLink to="/">Home</MenuLink>
+              <MenuLink to="#" arrow={1}>
                 Shop
               </MenuLink>
               <MenuLink to="#">Journal</MenuLink>
@@ -129,31 +162,51 @@ class App extends Component {
                 arrow
                 onClick={() => {
                   this.setState(state => ({ showCart: !state.showCart }));
-                }}>
+                }}
+              >
                 My Cart ({count})
               </CartButton>
-              <Motion
-                style={
+              <TransitionMotion
+                willEnter={() => ({
+                  opacity: 0,
+                  y: -10
+                })}
+                willLeave={() => ({
+                  opacity: spring(0),
+                  y: spring(-10)
+                })}
+                styles={
                   showCart
-                    ? {
-                        opacity: spring(1),
-                        y: spring(0),
-                      }
-                    : {
-                        opacity: spring(0),
-                        y: spring(-10),
-                      }
-                }>
-                {({ opacity, y }) => (
-                  <CartPopupContainer
-                    style={{
-                      opacity,
-                      transform: `translate3d(0, ${y}px, 0)`,
-                    }}>
-                    <CartPopup count={count} />
-                  </CartPopupContainer>
-                )}
-              </Motion>
+                    ? [
+                        {
+                          key: 'cart',
+                          style: {
+                            opacity: spring(1),
+                            y: spring(0)
+                          }
+                        }
+                      ]
+                    : []
+                }
+              >
+                {styles => {
+                  return (
+                    <div>
+                      {styles.map(({ key, style }) => (
+                        <CartPopupContainer
+                          key={key}
+                          style={{
+                            opacity: style.opacity,
+                            transform: `translate3d(0, ${style.y}px, 0)`
+                          }}
+                        >
+                          <CartPopup viewCart />
+                        </CartPopupContainer>
+                      ))}
+                    </div>
+                  );
+                }}
+              </TransitionMotion>
             </CartContainer>
           </Header>
 

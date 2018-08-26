@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { Link, Route } from 'react-router-dom';
 import { withContext } from './context';
 import styled from 'styled-components';
 
@@ -73,7 +72,7 @@ class ItemPreview extends Component {
             actions.removeItem(id);
           }}
         >
-          <i class="fas fa-times" />
+          <i className="fas fa-times" />
         </RemoveButton>
       </Wrapper>
     );

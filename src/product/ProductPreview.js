@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Link, Route } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import numeral from 'numeral';
 import { withContext } from '../context';
@@ -13,13 +13,6 @@ const Wrapper = styled.div`
   overflow: hidden;
 `;
 
-const Body = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  text-align: left;
-`;
-
 const Image = styled.img`
   max-height: 200px;
   object-fit: cover;
@@ -31,15 +24,9 @@ const Title = styled.span`
   text-transform: uppercase;
 `;
 
-const SmallText = styled.span`
-  font-size: 0.7rem;
-`;
-
 const ImageWrapper = styled.div`
   position: relative;
 `;
-
-const RemoveButton = styled.button``;
 
 const Overlay = styled.div`
   background-color: rgba(255, 255, 255, 0.5);
@@ -68,7 +55,8 @@ const CommonButton = styled.button`
   width: 200px;
 `;
 
-const PrimaryButton = styled(CommonButton)`
+const CommonLink = CommonButton.withComponent(Link);
+const PrimaryLink = styled(CommonLink)`
   background-color: black;
 `;
 const SecondaryButton = styled(CommonButton)`
@@ -90,7 +78,7 @@ class ProductPreview extends Component {
         <ImageWrapper>
           <Image src={`/media/${image}`} width="100%" height="auto" />
           <Overlay>
-            <PrimaryButton onClick={() => {}}>View details</PrimaryButton>
+            <PrimaryLink to={`/product/${id}`}>View details</PrimaryLink>
             <SecondaryButton
               onClick={() => {
                 addItem(id);
