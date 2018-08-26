@@ -3,12 +3,14 @@ import { Link, Route } from 'react-router-dom';
 import { TransitionMotion, spring } from 'react-motion';
 import { sum, values, compose, omit } from 'lodash/fp';
 import styled from 'styled-components';
+import { TweenLite, Power4 } from 'gsap/TweenMax';
 import './App.css';
 import Category from './category/Category';
 import Cart from './cart/Cart';
 import Product from './product/Product';
 import CartContent from './cart/CartContent';
 import { Provider } from './context';
+import { getItemCount } from './util';
 
 const Header = styled.header`
   display: flex;
@@ -102,8 +104,25 @@ class App extends Component {
     cart: initCartFromLocalStorage ? JSON.parse(initCartFromLocalStorage) : {}
   };
 
+  cartRef = React.createRef();
+
   componentDidMount() {
     this.fetchProducts();
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    // add an animation to the cart button so it's clear to the user when they
+    // add a new item.
+    if (getItemCount(prevState.cart) < getItemCount(this.state.cart)) {
+      TweenLite.fromTo(
+        this.cartRef.current,
+        2,
+        {
+          backgroundColor: '#fff179'
+        },
+        { backgroundColor: '#ffffff', ease: Power4.easeInOut }
+      );
+    }
   }
 
   async fetchProducts() {
@@ -178,7 +197,7 @@ class App extends Component {
               <MenuLink to="#">Journal</MenuLink>
               <MenuLink to="#">More</MenuLink>
             </TopMenu>
-            <CartContainer>
+            <CartContainer innerRef={this.cartRef}>
               <CartButton
                 arrow
                 onClick={() => {
