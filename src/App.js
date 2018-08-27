@@ -3,7 +3,7 @@ import { Link, Route } from 'react-router-dom';
 import { Transition } from 'react-spring';
 import { sum, values, compose, omit } from 'lodash/fp';
 import styled from 'styled-components';
-import { TweenLite, Power4 } from 'gsap/TweenMax';
+import { TweenLite, Power4 } from 'gsap';
 import './App.css';
 import Category from './category/Category';
 import Cart from './cart/Cart';
