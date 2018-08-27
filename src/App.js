@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { Link, Route } from 'react-router-dom';
-import { TransitionMotion, spring } from 'react-motion';
+import { Transition } from 'react-spring';
 import { sum, values, compose, omit } from 'lodash/fp';
 import styled from 'styled-components';
-import { TweenLite, Power4 } from 'gsap/TweenMax';
+import { TweenLite, Power4 } from 'gsap';
 import './App.css';
 import Category from './category/Category';
 import Cart from './cart/Cart';
@@ -206,47 +206,33 @@ class App extends Component {
               >
                 My Cart ({count})
               </CartButton>
-              <TransitionMotion
-                willEnter={() => ({
-                  opacity: 0,
-                  y: -10
-                })}
-                willLeave={() => ({
-                  opacity: spring(0),
-                  y: spring(-10)
-                })}
-                styles={
-                  showCart
-                    ? [
-                        {
-                          key: 'cart',
-                          style: {
-                            opacity: spring(1),
-                            y: spring(0)
-                          }
-                        }
-                      ]
-                    : []
-                }
-              >
-                {styles => {
-                  return (
-                    <div>
-                      {styles.map(({ key, style }) => (
-                        <CartPopupContainer
-                          key={key}
-                          style={{
-                            opacity: style.opacity,
-                            transform: `translate3d(0, ${style.y}px, 0)`
-                          }}
-                        >
-                          <CartContent viewCart />
-                        </CartPopupContainer>
-                      ))}
-                    </div>
-                  );
+              <Transition
+                enter={{
+                  opacity: 1,
+                  y: 0
                 }}
-              </TransitionMotion>
+                leave={{
+                  opacity: 0,
+                  y: -10,
+                  pointerEvents: 'none'
+                }}
+                from={{
+                  opacity: 0,
+                  y: -20
+                }}
+              >
+                {showCart &&
+                  (styles => (
+                    <CartPopupContainer
+                      style={{
+                        opacity: styles.opacity,
+                        transform: `translate3d(0, ${styles.y}px, 0)`
+                      }}
+                    >
+                      <CartContent viewCart />
+                    </CartPopupContainer>
+                  ))}
+              </Transition>
             </CartContainer>
           </Header>
 
